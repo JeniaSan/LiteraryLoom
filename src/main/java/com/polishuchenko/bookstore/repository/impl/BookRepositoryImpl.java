@@ -1,5 +1,6 @@
 package com.polishuchenko.bookstore.repository.impl;
 
+import com.polishuchenko.bookstore.exception.DataProcessingException;
 import com.polishuchenko.bookstore.model.Book;
 import com.polishuchenko.bookstore.repository.BookRepository;
 import java.util.List;
@@ -11,8 +12,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class BookRepositoryImpl implements BookRepository {
+    private final SessionFactory sessionFactory;
+
     @Autowired
-    private SessionFactory sessionFactory;
+    public BookRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Book save(Book book) {
@@ -28,7 +33,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't save the book: " + book, e);
+            throw new DataProcessingException("Can't save the book: " + book, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -41,7 +46,7 @@ public class BookRepositoryImpl implements BookRepository {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery("FROM Book ", Book.class).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get all books");
+            throw new DataProcessingException("Can't get all books", e);
         }
     }
 }
