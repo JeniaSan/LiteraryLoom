@@ -2,7 +2,7 @@ package com.polishuchenko.bookstore.repository.book.specification;
 
 import com.polishuchenko.bookstore.model.Book;
 import com.polishuchenko.bookstore.repository.book.SpecificationProvider;
-import java.util.Arrays;
+import java.util.stream.Stream;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ public class IsbnSpecificationProvider implements SpecificationProvider<Book> {
 
     @Override
     public Specification<Book> getSpecification(String[] params) {
-        return (root, query, criteriaBuilder) -> root.get(KEY).in(Arrays.stream(params).toArray());
+        return (root, query, criteriaBuilder) -> root.get(KEY).in(Stream.of(params).toArray());
     }
 
     @Override
