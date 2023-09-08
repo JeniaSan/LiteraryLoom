@@ -20,26 +20,32 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book, Book
     @Override
     public Specification<Book> build(BookSearchParameters searchParameters) {
         Specification<Book> specification = Specification.where(null);
-        if (searchParameters.author() != null && searchParameters.author().length > 0) {
-            specification = specification.and(
-                    specificationProviderManager.getSpecificationProvider(AUTHOR_KEY)
-                            .getSpecification(searchParameters.author()));
+        if (isParamsPresent(searchParameters.author())) {
+            specification = updateSpecification(
+                    specification, AUTHOR_KEY, searchParameters.author());
         }
-        if (searchParameters.isbn() != null && searchParameters.isbn().length > 0) {
-            specification = specification.and(
-                    specificationProviderManager.getSpecificationProvider(ISBN_KEY)
-                            .getSpecification(searchParameters.isbn()));
+        if (isParamsPresent(searchParameters.isbn())) {
+            specification = updateSpecification(
+                    specification, ISBN_KEY, searchParameters.isbn());
         }
-        if (searchParameters.price() != null && searchParameters.price().length > 0) {
-            specification = specification.and(
-                    specificationProviderManager.getSpecificationProvider(PRICE_KEY)
-                            .getSpecification(searchParameters.price()));
+        if (isParamsPresent(searchParameters.price())) {
+            specification = updateSpecification(
+                    specification, PRICE_KEY, searchParameters.price());
         }
-        if (searchParameters.title() != null && searchParameters.title().length > 0) {
-            specification = specification.and(
-                    specificationProviderManager.getSpecificationProvider(TITLE_KEY)
-                            .getSpecification(searchParameters.title()));
+        if (isParamsPresent(searchParameters.title())) {
+            specification = updateSpecification(
+                    specification, TITLE_KEY, searchParameters.title());
         }
         return specification;
+    }
+
+    private boolean isParamsPresent(String[] params) {
+        return params != null && params.length > 0;
+    }
+
+    private Specification<Book> updateSpecification(
+            Specification<Book> specification, String key, String[] params) {
+        return specification.and(specificationProviderManager.getSpecificationProvider(key)
+                .getSpecification(params));
     }
 }
