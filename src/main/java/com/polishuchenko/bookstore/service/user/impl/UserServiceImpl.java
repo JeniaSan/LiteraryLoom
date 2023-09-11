@@ -25,11 +25,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRegistrationResponseDto register(UserRegistrationRequestDto request)
             throws RegistrationException {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new RegistrationException("Unable to complete registration");
         }
         User user = userMapper.toModel(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.password()));
         Role role = roleRepository.getByName(Role.RoleName.ROLE_USER);
         user.setRoles(Set.of(role));
         return userMapper.toResponseUser(userRepository.save(user));
