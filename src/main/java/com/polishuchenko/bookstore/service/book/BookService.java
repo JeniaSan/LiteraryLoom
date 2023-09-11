@@ -1,4 +1,4 @@
-package com.polishuchenko.bookstore.service;
+package com.polishuchenko.bookstore.service.book;
 
 import com.polishuchenko.bookstore.dto.book.BookDto;
 import com.polishuchenko.bookstore.dto.book.BookSearchParameters;
