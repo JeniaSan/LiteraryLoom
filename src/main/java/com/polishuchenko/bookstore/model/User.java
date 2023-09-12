@@ -12,10 +12,10 @@ import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,10 +42,9 @@ public class User implements UserDetails {
     private String lastName;
     private String shippingAddress;
     @ManyToMany
+    @Fetch(value = FetchMode.JOIN)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Set<Role> roles;
     @Column(nullable = false)
     private boolean isDeleted;
