@@ -3,7 +3,7 @@ package com.polishuchenko.bookstore.controller;
 import com.polishuchenko.bookstore.dto.book.BookDto;
 import com.polishuchenko.bookstore.dto.book.BookSearchParameters;
 import com.polishuchenko.bookstore.dto.book.CreateBookRequestDto;
-import com.polishuchenko.bookstore.service.BookService;
+import com.polishuchenko.bookstore.service.book.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,12 +43,14 @@ public class BookController {
 
     @Operation(summary = "Create a new book",
             description = "Create a new book and insert to database")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
     }
 
     @Operation(summary = "Delete book by id", description = "Delete book by id")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
@@ -55,6 +58,7 @@ public class BookController {
     }
 
     @Operation(summary = "Update a book", description = "Update a book to the request values")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public BookDto updateBook(@PathVariable Long id,
                               @RequestBody @Valid CreateBookRequestDto createBookRequestDto) {
