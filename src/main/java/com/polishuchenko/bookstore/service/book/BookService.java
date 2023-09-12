@@ -1,6 +1,7 @@
 package com.polishuchenko.bookstore.service.book;
 
 import com.polishuchenko.bookstore.dto.book.BookDto;
+import com.polishuchenko.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.polishuchenko.bookstore.dto.book.BookSearchParameters;
 import com.polishuchenko.bookstore.dto.book.CreateBookRequestDto;
 import java.util.List;
@@ -18,4 +19,6 @@ public interface BookService {
     BookDto updateById(Long id, CreateBookRequestDto bookRequestDto);
 
     List<BookDto> search(BookSearchParameters searchParameters);
+
+    List<BookDtoWithoutCategoryIds> findAllByCategoryId(Long id);
 }
