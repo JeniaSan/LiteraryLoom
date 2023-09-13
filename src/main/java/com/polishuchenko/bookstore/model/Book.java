@@ -39,8 +39,8 @@ public class Book {
     private String coverImage;
     @ManyToMany
     @JoinTable(name = "category_book",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Category> categories = new HashSet<>();
