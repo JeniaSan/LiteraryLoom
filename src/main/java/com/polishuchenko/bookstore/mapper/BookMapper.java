@@ -6,8 +6,10 @@ import com.polishuchenko.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.polishuchenko.bookstore.dto.book.CreateBookRequestDto;
 import com.polishuchenko.bookstore.model.Book;
 import com.polishuchenko.bookstore.model.Category;
+
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,12 +31,14 @@ public interface BookMapper {
                 .map(Category::getId)
                 .collect(Collectors.toSet()));
     }
+
     default Set<Category> mapToCategorySet(Set<Long> categoryIds) {
         return categoryIds.stream()
                 .map(id -> {
                     Category category = new Category();
                     category.setId(id);
-                    return category; })
+                    return category;
+                })
                 .collect(Collectors.toSet());
     }
 }
