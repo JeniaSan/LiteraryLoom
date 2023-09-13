@@ -25,8 +25,9 @@ public class BookServiceImpl implements BookService {
     private final BookSpecificationBuilder specificationBuilder;
 
     @Override
-    public BookDto save(CreateBookRequestDto book) {
-        Book model = bookMapper.toModel(book);
+    public BookDto save(CreateBookRequestDto requestDto) {
+        Book model = bookMapper.toModel(requestDto);
+        model.setCategories(bookMapper.mapToCategorySet(requestDto.getCategoriesIds()));
         return bookMapper.toDto(bookRepository.save(model));
     }
 
