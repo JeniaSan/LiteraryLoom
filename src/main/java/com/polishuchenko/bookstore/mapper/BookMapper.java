@@ -6,10 +6,8 @@ import com.polishuchenko.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.polishuchenko.bookstore.dto.book.CreateBookRequestDto;
 import com.polishuchenko.bookstore.model.Book;
 import com.polishuchenko.bookstore.model.Category;
-
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
