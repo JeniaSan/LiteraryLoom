@@ -2,6 +2,7 @@ package com.polishuchenko.bookstore.service.shoppingcart.impl;
 
 import com.polishuchenko.bookstore.dto.cartitem.CartItemRequestDto;
 import com.polishuchenko.bookstore.dto.cartitem.CartItemResponseDto;
+import com.polishuchenko.bookstore.dto.cartitem.UpdateCartItemDto;
 import com.polishuchenko.bookstore.dto.shoppingcart.ShoppingCartDto;
 import com.polishuchenko.bookstore.exception.EntityNotFoundException;
 import com.polishuchenko.bookstore.mapper.CartItemMapper;
@@ -29,6 +30,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartMapper shoppingCartMapper;
     private final BookRepository bookRepository;
     private final CartItemRepository cartItemRepository;
+
+    @Override
+    public CartItemResponseDto update(Long id, UpdateCartItemDto updateCartItemDto) {
+        CartItem cartItem = cartItemRepository
+                .findCartItemByIdAndShoppingCartId(id, currentUserCart().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Can't find item with id= " + id));
+        cartItem.setQuantity(updateCartItemDto.getQuantity());
+        cartItem.setId(id);
+        return cartItemMapper.toDto(cartItemRepository.save(cartItem));
+    }
+
+    @Override
+    public void delete(Long id) {
+        cartItemRepository.deleteById(id);
+    }
 
     @Override
     public ShoppingCartDto getShoppingCart() {

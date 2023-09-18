@@ -37,14 +37,17 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.getByName(Role.RoleName.ROLE_USER);
         user.setRoles(Set.of(role));
         User savedUser = userRepository.save(user);
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setUser(savedUser);
-        shoppingCartRepository.save(shoppingCart);
+        createShoppingCart(savedUser);
         return userMapper.toResponseUser(savedUser);
     }
 
     @Override
     public User getAuthenticatedUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    private void createShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
     }
 }

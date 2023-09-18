@@ -4,7 +4,6 @@ import com.polishuchenko.bookstore.dto.cartitem.CartItemRequestDto;
 import com.polishuchenko.bookstore.dto.cartitem.CartItemResponseDto;
 import com.polishuchenko.bookstore.dto.cartitem.UpdateCartItemDto;
 import com.polishuchenko.bookstore.dto.shoppingcart.ShoppingCartDto;
-import com.polishuchenko.bookstore.service.cartitem.CartItemService;
 import com.polishuchenko.bookstore.service.shoppingcart.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
-    private final CartItemService cartItemService;
 
     @Operation(summary = "Get a shopping cart",
             description = "Get a shopping cart with all cart items")
@@ -45,12 +43,12 @@ public class ShoppingCartController {
     @PutMapping("/cart-items/{cartItemId}")
     public CartItemResponseDto update(
             @PathVariable Long cartItemId, @RequestBody @Valid UpdateCartItemDto updateDto) {
-        return cartItemService.update(cartItemId, updateDto);
+        return shoppingCartService.update(cartItemId, updateDto);
     }
 
     @Operation(summary = "Delete cart item", description = "Delete cart item in shopping cart")
     @DeleteMapping("/cart-items/{cartItemId}")
     public void delete(@PathVariable Long cartItemId) {
-        cartItemService.delete(cartItemId);
+        shoppingCartService.delete(cartItemId);
     }
 }
