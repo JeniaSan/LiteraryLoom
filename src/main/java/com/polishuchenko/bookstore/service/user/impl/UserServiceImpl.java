@@ -11,9 +11,7 @@ import com.polishuchenko.bookstore.repository.role.RoleRepository;
 import com.polishuchenko.bookstore.repository.shoppingcart.ShoppingCartRepository;
 import com.polishuchenko.bookstore.repository.user.UserRepository;
 import com.polishuchenko.bookstore.service.user.UserService;
-
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
