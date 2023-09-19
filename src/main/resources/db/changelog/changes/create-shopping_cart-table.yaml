@@ -1,19 +1,26 @@
 databaseChangeLog:
   - changeSet:
-      id: create-user-role-table
+      id: create-shopping_cart-table
       author: YEvhenii Polishuchenko
       changes:
         - createTable:
-            tableName: user_role
+            tableName: shopping_cart
             columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
               - column:
                   name: user_id
                   type: bigint
                   constraints:
                     nullable: false
               - column:
-                  name: role_id
-                  type: bigint
+                  name: is_deleted
+                  type: boolean
                   constraints:
                     nullable: false
 

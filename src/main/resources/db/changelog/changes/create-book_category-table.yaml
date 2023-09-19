@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: create-book_category-table
-      author: YEvhenii
+      author: YEvhenii Polishuchenko
       changes:
         - createTable:
             tableName: category_book
