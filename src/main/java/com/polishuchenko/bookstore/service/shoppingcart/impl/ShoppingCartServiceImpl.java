@@ -77,7 +77,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCart getCurrentUserCart() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return shoppingCartRepository.findShoppingCartByUserId(user.getId());
+        ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId());
+        shoppingCart.setCartItems(
+                cartItemRepository.getCartItemsByShoppingCartId(shoppingCart.getId()));
+        return shoppingCart;
     }
 
     @Override

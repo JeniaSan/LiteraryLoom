@@ -20,5 +20,5 @@ public interface ShoppingCartService {
 
     ShoppingCart getCurrentUserCart();
 
-    void createShoppingCart(User user);
+    void createShoppingCart(User savedUser);
 }
