@@ -5,11 +5,10 @@ import com.polishuchenko.bookstore.dto.user.UserRegistrationResponseDto;
 import com.polishuchenko.bookstore.exception.RegistrationException;
 import com.polishuchenko.bookstore.mapper.UserMapper;
 import com.polishuchenko.bookstore.model.Role;
-import com.polishuchenko.bookstore.model.ShoppingCart;
 import com.polishuchenko.bookstore.model.User;
 import com.polishuchenko.bookstore.repository.role.RoleRepository;
-import com.polishuchenko.bookstore.repository.shoppingcart.ShoppingCartRepository;
 import com.polishuchenko.bookstore.repository.user.UserRepository;
+import com.polishuchenko.bookstore.service.shoppingcart.ShoppingCartService;
 import com.polishuchenko.bookstore.service.user.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
-    private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserRegistrationResponseDto register(UserRegistrationRequestDto request)
@@ -37,18 +36,12 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.getByName(Role.RoleName.ROLE_USER);
         user.setRoles(Set.of(role));
         User savedUser = userRepository.save(user);
-        createShoppingCart(savedUser);
+        shoppingCartService.createShoppingCart(savedUser);
         return userMapper.toResponseUser(savedUser);
     }
 
     @Override
     public User getAuthenticatedUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
-    private void createShoppingCart(User user) {
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setUser(user);
-        shoppingCartRepository.save(shoppingCart);
     }
 }
