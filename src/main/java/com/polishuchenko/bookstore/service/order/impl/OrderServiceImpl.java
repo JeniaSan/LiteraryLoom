@@ -113,8 +113,9 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderResponseDto initializeOrderItems(Order order) {
         OrderResponseDto responseDto = orderMapper.toDto(order);
-        responseDto.setOrderItems(allOrderItemsByOrderId(order.getId())
-                .toList());
+        responseDto.setOrderItems(orderItemRepository.getAllByOrderId(order.getId()).stream()
+                        .map(orderItemMapper::toDto)
+                        .toList());
         return responseDto;
     }
 
