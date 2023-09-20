@@ -8,10 +8,12 @@ import com.polishuchenko.bookstore.exception.EntityNotFoundException;
 import com.polishuchenko.bookstore.mapper.OrderItemMapper;
 import com.polishuchenko.bookstore.mapper.OrderMapper;
 import com.polishuchenko.bookstore.mapper.ShoppingCartMapper;
+import com.polishuchenko.bookstore.model.CartItem;
 import com.polishuchenko.bookstore.model.Order;
 import com.polishuchenko.bookstore.model.ShoppingCart;
 import com.polishuchenko.bookstore.model.User;
 import com.polishuchenko.bookstore.repository.order.OrderRepository;
+import com.polishuchenko.bookstore.repository.orderitem.OrderItemRepository;
 import com.polishuchenko.bookstore.service.order.OrderService;
 import com.polishuchenko.bookstore.service.shoppingcart.ShoppingCartService;
 import com.polishuchenko.bookstore.service.user.UserService;
@@ -33,12 +35,17 @@ public class OrderServiceImpl implements OrderService {
     private final ShoppingCartService shoppingCartService;
     private final ShoppingCartMapper shoppingCartMapper;
     private final OrderItemMapper orderItemMapper;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     public List<OrderResponseDto> getAllOrders() {
         User user = userService.getAuthenticatedUser();
-        return orderRepository.getOrdersByUserId(user.getId()).stream()
-                .map(orderMapper::toDto)
+        List<Order> orders = orderRepository.getOrdersByUserId(user.getId());
+        for (Order order : orders) {
+            order.setOrderItems(orderItemRepository.getAllByOrderId(order.getId()));
+        }
+        return orders.stream()
+                .map(this::initializeOrderItems)
                 .toList();
     }
 
@@ -48,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingAddress(request.getOrderAddress());
         shoppingCartService.clear(
                 shoppingCartMapper.toEntity(shoppingCartService.getShoppingCart()));
-        return orderMapper.toDto(orderRepository.save(order));
+        return initializeOrderItems(orderRepository.save(order));
     }
 
     @Override
@@ -68,10 +75,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto changeStatus(Long id, OrderStatusDto request) {
-        Order order = orderRepository
-                .getOrderByIdAndUserId(id, userService.getAuthenticatedUser().getId());
+        Order order = orderRepository.findOrderById(id)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Can't find order with id= " + id));
         order.setStatus(request.status());
-        return orderMapper.toDto(orderRepository.save(order));
+        return initializeOrderItems(orderRepository.save(order));
     }
 
     private Order createOrder(OrderAddressDto request) {
@@ -82,18 +90,36 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingAddress(request.getOrderAddress());
         order.setUser(userService.getAuthenticatedUser());
         order.setTotal(shoppingCart.getCartItems().stream()
-                .map(i -> i.getBook().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .map(this::calculateItemPrice)
                 .reduce(BigDecimal::add)
                 .orElseThrow());
+        Order savedOrder = orderRepository.save(order);
         order.setOrderItems(shoppingCart.getCartItems().stream()
-                .map(orderItemMapper::cratItemToOrderItem)
+                .map(i -> orderItemMapper.cartItemToOrderItem(i, savedOrder))
+                .map(orderItemRepository::save)
                 .collect(Collectors.toSet()));
-        return orderRepository.save(order);
+        return savedOrder;
     }
 
     private Stream<OrderItemDto> allOrderItemsByOrderId(Long orderId) {
-        return orderRepository.getOrderByIdAndUserId(orderId,
-                        userService.getAuthenticatedUser().getId()).getOrderItems().stream()
+        return orderRepository.getOrdersByUserId(userService.getAuthenticatedUser().getId())
+                .stream()
+                .filter(o -> o.getId().equals(orderId))
+                .findFirst().orElseThrow(
+                        () -> new EntityNotFoundException("Can't find order with id=" + orderId))
+                .getOrderItems().stream()
                 .map(orderItemMapper::toDto);
+    }
+
+    private OrderResponseDto initializeOrderItems(Order order) {
+        OrderResponseDto responseDto = orderMapper.toDto(order);
+        responseDto.setOrderItems(allOrderItemsByOrderId(order.getId())
+                .toList());
+        return responseDto;
+    }
+
+    private BigDecimal calculateItemPrice(CartItem cartItem) {
+        return cartItem.getBook().getPrice()
+                .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
     }
 }

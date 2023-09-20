@@ -55,9 +55,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartDto getShoppingCart() {
-        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(getCurrentUserCart());
-        shoppingCartDto.setCartItems(getCurrentUserCart().getCartItems().stream()
-                .map(cartItemMapper::mapToDto)
+        ShoppingCart shoppingCart = getCurrentUserCart();
+        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(shoppingCart);
+        shoppingCartDto.setCartItems(shoppingCart.getCartItems().stream()
+                .map(cartItemMapper::toDto)
                 .collect(Collectors.toSet()));
         return shoppingCartDto;
     }

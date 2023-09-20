@@ -45,6 +45,8 @@ public class Order {
     @Column(nullable = false)
     private String shippingAddress;
     @OneToMany(mappedBy = "order")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<OrderItem> orderItems;
     @Column(nullable = false)
     private boolean isDeleted = false;
