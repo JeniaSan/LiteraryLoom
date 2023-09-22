@@ -35,7 +35,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public CartItemResponseDto update(Long id, UpdateCartItemDto updateCartItemDto) {
         CartItem cartItem = cartItemRepository
-                .findCartItemByIdAndShoppingCartId(id, getCurrentUserCart().getId())
+                .findCartItemById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find item with id= " + id));
         cartItem.setQuantity(updateCartItemDto.getQuantity());
         cartItem.setId(id);
@@ -55,9 +55,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartDto getShoppingCart() {
-        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(getCurrentUserCart());
-        shoppingCartDto.setCartItems(getCurrentUserCart().getCartItems().stream()
-                .map(cartItemMapper::mapToDto)
+        ShoppingCart shoppingCart = getCurrentUserCart();
+        ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(shoppingCart);
+        shoppingCartDto.setCartItems(shoppingCart.getCartItems().stream()
+                .map(cartItemMapper::toDto)
                 .collect(Collectors.toSet()));
         return shoppingCartDto;
     }
@@ -77,7 +78,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCart getCurrentUserCart() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return shoppingCartRepository.findShoppingCartByUserId(user.getId());
+        ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId());
+        shoppingCart.setCartItems(
+                cartItemRepository.getCartItemsByShoppingCartId(shoppingCart.getId()));
+        return shoppingCart;
     }
 
     @Override
