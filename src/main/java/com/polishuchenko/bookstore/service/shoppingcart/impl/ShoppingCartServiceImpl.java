@@ -35,7 +35,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public CartItemResponseDto update(Long id, UpdateCartItemDto updateCartItemDto) {
         CartItem cartItem = cartItemRepository
-                .findCartItemByIdAndShoppingCartId(id, getCurrentUserCart().getId())
+                .findCartItemById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find item with id= " + id));
         cartItem.setQuantity(updateCartItemDto.getQuantity());
         cartItem.setId(id);

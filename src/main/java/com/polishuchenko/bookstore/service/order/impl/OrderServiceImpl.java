@@ -104,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
     private Stream<OrderItemDto> allOrderItemsByOrderId(Long orderId) {
         return orderRepository.getOrdersByUserId(userService.getAuthenticatedUser().getId())
                 .stream()
-                .filter(o -> o.getId().equals(orderId))
+                .filter(order -> order.getId().equals(orderId))
                 .findFirst().orElseThrow(
                         () -> new EntityNotFoundException("Can't find order with id=" + orderId))
                 .getOrderItems().stream()
