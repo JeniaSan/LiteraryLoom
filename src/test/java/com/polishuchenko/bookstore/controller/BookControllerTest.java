@@ -32,6 +32,12 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
     private static MockMvc mockMvc;
+    private static final String ADD_BOOK_SCRIPT =
+            "classpath:database/books/add-book-kobzar-to-book-table.sql";
+    private static final String DELETE_BOOK_SCRIPT =
+            "classpath:database/books/delete-book-kobzar-from-book-table.sql";
+    private static final String USER_NAME = "user";
+    private static final String ADMIN_NAME = "admin";
     private static final Long VALID_ID = 1L;
     private static final Long INVALID_ID = 99L;
     private static Book kobzar;
@@ -84,19 +90,18 @@ public class BookControllerTest {
         kobzarDto.setCoverImage(kobzar.getCoverImage());
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT,
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
+            scripts = DELETE_BOOK_SCRIPT,
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get list of books")
-    void getAll_ReturnsBookDtosList() throws Exception {
+    void getAll_validRequestDto_ReturnsBookDtosList() throws Exception {
         List<BookDto> expected = List.of(kobzarDto);
         MvcResult mvcResult = mockMvc.perform(get("/books")).andReturn();
 
@@ -107,18 +112,15 @@ public class BookControllerTest {
                 expected.get(0), actual.get(0), "id", "categoriesIds"));
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
-    @DisplayName("Get book by valid id")
+    @DisplayName("Get book dto by valid id")
     void getBookById_validId_ReturnsExpectedBook() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/books/" + VALID_ID)).andReturn();
 
@@ -128,16 +130,13 @@ public class BookControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(kobzarDto, actual, "id", "categoriesIds"));
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get book by invalid id")
     void getBookById_invalidId_ThrowsException() throws Exception {
@@ -145,11 +144,10 @@ public class BookControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Create new book and add to DB")
     void create_validRequest_ReturnsBookDto() throws Exception {
@@ -165,12 +163,11 @@ public class BookControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(kobzarDto, actual, "id", "categoriesIds"));
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @DisplayName("Create new category with empty name")
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void create_RequestEmptyTitle_ThrowsException() throws Exception {
         mockMvc.perform(post("/books")
@@ -180,33 +177,27 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Delete book by valid id")
-    void delete_validId_ReturnsNothing() throws Exception {
+    void delete_validId_Successful() throws Exception {
         mockMvc.perform(delete("/books/" + VALID_ID))
                 .andExpect(status().isNoContent());
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update book by valid request")
     void update_validRequest_ReturnsExpectedBook() throws Exception {
@@ -223,16 +214,13 @@ public class BookControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(kobzarDto, actual, "id", "categoriesIds"));
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update book by invalid id request")
     void update_invalidRequest_ThrowsException() throws Exception {
@@ -243,16 +231,13 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/books/delete-book-kobzar-from-book-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Find all books by valid params")
     public void getAllBooks_validParams_ReturnsBooksList() throws Exception {

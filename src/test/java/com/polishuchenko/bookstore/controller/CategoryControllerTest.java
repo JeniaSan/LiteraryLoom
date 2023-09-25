@@ -31,6 +31,20 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CategoryControllerTest {
     private static MockMvc mockMvc;
+    private static final String ADD_CATEGORY_SCRIPT =
+            "classpath:database/categories/add-category-detective-to-category-table.sql";
+    private static final String DELETE_CATEGORY_SCRIPT =
+            "classpath:database/categories/remove-category-detective-from-category-table.sql";
+    private static final String ADD_BOOK_SCRIPT =
+            "classpath:database/books/add-book-kobzar-to-book-table.sql";
+    private static final String DELETE_BOOK_SCRIPT =
+            "classpath:database/books/delete-book-kobzar-from-book-table.sql";
+    private static final String ADD_CATEGORY_BOOK_SCRIPT =
+            "classpath:database/books_categories/add-kobzar-detective-to-category_book-table.sql";
+    private static final String DELETE_CATEGORY_BOOK_SCRIPT =
+            "classpath:database/books_categories/delete-from-category_book-table.sql";
+    private static final String USER_NAME = "user";
+    private static final String ADMIN_NAME = "admin";
     private static final Long VALID_ID = 1L;
     private static final Long INVALID_ID = 99L;
     private static CategoryDto detectiveResponse;
@@ -69,12 +83,10 @@ class CategoryControllerTest {
         invalidRequestDto.setName("");
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Create new category and add to DB")
     void create_validRequest_ReturnsCategoryDto() throws Exception {
@@ -90,13 +102,11 @@ class CategoryControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(detectiveResponse, actual, "id"));
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @DisplayName("Create new category with empty name")
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void create_RequestEmptyName_ThrowsException() throws Exception {
         mockMvc.perform(post("/categories")
@@ -106,17 +116,13 @@ class CategoryControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get list of categories")
     void getAll_ReturnsCategoryDtosList() throws Exception {
@@ -129,17 +135,13 @@ class CategoryControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(expected.get(0), actual.get(0), "id"));
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get category by valid id")
     void getCategoryById_validId_ReturnsExpectedCategory() throws Exception {
@@ -151,17 +153,13 @@ class CategoryControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(detectiveResponse, actual, "id"));
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get category by invalid id")
     void getCategoryById_invalidId_ThrowsException() throws Exception {
@@ -169,17 +167,13 @@ class CategoryControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update category by valid request")
     void update_validRequest_ReturnsExpectedCategory() throws Exception {
@@ -196,17 +190,13 @@ class CategoryControllerTest {
         assertTrue(EqualsBuilder.reflectionEquals(detectiveResponse, actual, "id"));
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update category by invalid id request")
     void update_invalidRequest_ThrowsException() throws Exception {
@@ -217,40 +207,29 @@ class CategoryControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = ADMIN_NAME, roles = {"ADMIN"})
     @Test
     @Sql(
-            scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql"
-            }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            scripts = ADD_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Delete category by valid id")
-    void delete_validId_ReturnsNothing() throws Exception {
+    void delete_validId_Successful() throws Exception {
         mockMvc.perform(delete("/categories/" + VALID_ID))
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(username = "user")
+    @WithMockUser(username = USER_NAME)
     @Test
     @Sql(
             scripts = {
-                    "classpath:database/categories/add-category-detective-to-category-table.sql",
-                    "classpath:database/books/add-book-kobzar-to-book-table.sql",
-                    "classpath:database/books_categories/"
-                            + "add-kobzar-detective-to-category_book-table.sql"
+                    ADD_CATEGORY_SCRIPT, ADD_BOOK_SCRIPT, ADD_CATEGORY_BOOK_SCRIPT
             }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = {
-                    "classpath:database/books_categories/delete-from-category_book-table.sql",
-                    "classpath:database/categories/"
-                    + "remove-category-detective-from-category-table.sql",
-                    "classpath:database/books/delete-book-kobzar-from-book-table.sql"
+            scripts = {DELETE_CATEGORY_BOOK_SCRIPT, DELETE_CATEGORY_SCRIPT, DELETE_BOOK_SCRIPT
             }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get book by valid category id")

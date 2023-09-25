@@ -106,6 +106,7 @@ public class BookServiceImplTest {
 
         verify(bookRepository).save(kobzar);
         assertNotNull(actual);
+        assertEquals(actual, kobzarDto);
     }
 
     @Test
@@ -175,18 +176,13 @@ public class BookServiceImplTest {
                 new String[]{"kobzar"}, new String[0], new String[0], new String[0]);
         Specification<Book> specification = mock(Specification.class);
         List<Book> books = List.of(kobzar);
-        final List<BookDto> bookDtos = List.of(kobzarDto);
 
         when(specificationBuilder.build(searchParameters)).thenReturn(specification);
         when(bookRepository.findAll(specification)).thenReturn(books);
         when(bookMapper.toDto(kobzar)).thenReturn(kobzarDto);
 
-        final List<BookDto> actual = bookService.search(searchParameters);
-
-        verify(specificationBuilder).build(searchParameters);
-        verify(bookRepository).findAll(specification);
-        verify(bookMapper).toDto(kobzar);
-
+        List<BookDto> bookDtos = List.of(kobzarDto);
+        List<BookDto> actual = bookService.search(searchParameters);
         assertEquals(bookDtos, actual);
     }
 
