@@ -6,11 +6,12 @@ import com.polishuchenko.bookstore.dto.order.OrderStatusDto;
 import com.polishuchenko.bookstore.dto.orderitem.OrderItemDto;
 import java.util.List;
 import java.util.Set;
+import org.springframework.security.core.Authentication;
 
 public interface OrderService {
     List<OrderResponseDto> getAllOrders();
 
-    OrderResponseDto addAddress(OrderAddressDto request);
+    OrderResponseDto addAddress(OrderAddressDto request, Authentication authentication);
 
     Set<OrderItemDto> getAllOrderItems(Long orderId);
 

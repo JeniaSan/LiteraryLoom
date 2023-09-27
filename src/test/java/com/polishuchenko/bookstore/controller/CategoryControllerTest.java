@@ -89,7 +89,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Create new category and add to DB")
-    void create_validRequest_ReturnsCategoryDto() throws Exception {
+    void create_validRequest_returnsCategoryDto() throws Exception {
         MvcResult mvcResult = mockMvc.perform(post("/categories")
                         .content(objectMapper.writeValueAsString(validRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ class CategoryControllerTest {
     @Sql(
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
-    void create_RequestEmptyName_ThrowsException() throws Exception {
+    void create_RequestEmptyName_throwsException() throws Exception {
         mockMvc.perform(post("/categories")
                         .content(objectMapper.writeValueAsString(invalidRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +125,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get list of categories")
-    void getAll_ReturnsCategoryDtosList() throws Exception {
+    void getAll_returnsCategoryDtosList() throws Exception {
         List<CategoryDto> expected = List.of(detectiveResponse);
         MvcResult mvcResult = mockMvc.perform(get("/categories")).andReturn();
 
@@ -144,7 +144,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get category by valid id")
-    void getCategoryById_validId_ReturnsExpectedCategory() throws Exception {
+    void getCategoryById_validId_returnsExpectedCategory() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/categories/" + VALID_ID)).andReturn();
 
         CategoryDto actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
@@ -162,7 +162,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get category by invalid id")
-    void getCategoryById_invalidId_ThrowsException() throws Exception {
+    void getCategoryById_invalidId_throwsException() throws Exception {
         mockMvc.perform(get("/categories/" + INVALID_ID))
                 .andExpect(status().isNotFound());
     }
@@ -176,7 +176,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update category by valid request")
-    void update_validRequest_ReturnsExpectedCategory() throws Exception {
+    void update_validRequest_returnsExpectedCategory() throws Exception {
         MvcResult mvcResult = mockMvc.perform(put("/categories/" + VALID_ID)
                         .content(objectMapper.writeValueAsString(validRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -199,7 +199,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update category by invalid id request")
-    void update_invalidRequest_ThrowsException() throws Exception {
+    void update_invalidRequest_throwsException() throws Exception {
         mockMvc.perform(put("/categories/" + INVALID_ID)
                         .content(objectMapper.writeValueAsString(invalidRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -216,7 +216,7 @@ class CategoryControllerTest {
             scripts = DELETE_CATEGORY_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Delete category by valid id")
-    void delete_validId_Successful() throws Exception {
+    void delete_validId_successful() throws Exception {
         mockMvc.perform(delete("/categories/" + VALID_ID))
                 .andExpect(status().isOk());
     }

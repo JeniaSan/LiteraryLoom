@@ -49,7 +49,7 @@ public class CategoryServiceImplTest {
 
     @Test
     @DisplayName("Find all categories")
-    public void findAll_ReturnsListWithAllCategories() {
+    public void findAll_returnsListWithAllCategories() {
         when(categoryRepository.findAll()).thenReturn(List.of(detective));
         when(categoryMapper.toDto(ArgumentMatchers.any())).thenReturn(detectiveDto);
 
@@ -59,7 +59,7 @@ public class CategoryServiceImplTest {
 
     @Test
     @DisplayName("Get category by category id")
-    public void getById_validId_ReturnsExpectedCategory() {
+    public void getById_validId_returnsExpectedCategory() {
         when(categoryRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(detective));
         when(categoryMapper.toDto(ArgumentMatchers.any())).thenReturn(detectiveDto);
@@ -70,14 +70,14 @@ public class CategoryServiceImplTest {
 
     @Test
     @DisplayName("Throw exception because category id is invalid")
-    public void getById_invalidId_ThrowsException() {
+    public void getById_invalidId_throwsException() {
         assertThrows(EntityNotFoundException.class,
                 () -> categoryService.getById(INVALID_ID));
     }
 
     @Test
     @DisplayName("Save category to DB")
-    public void save_validCategory_ReturnsExpectedCategory() {
+    public void save_validCategory_returnsExpectedCategory() {
         CategoryRequestDto categoryDto = new CategoryRequestDto();
         categoryDto.setName(detective.getName());
 
@@ -90,7 +90,7 @@ public class CategoryServiceImplTest {
 
     @Test
     @DisplayName("Update by valid id")
-    public void update_validId_ReturnsExpectedCategory() {
+    public void update_validId_returnsExpectedCategory() {
         CategoryRequestDto categoryRequestDto = new CategoryRequestDto();
         categoryRequestDto.setName("New name");
         Category detective = new Category();
@@ -111,7 +111,7 @@ public class CategoryServiceImplTest {
 
     @Test
     @DisplayName("Delete by valid id")
-    public void delete_validId_DoesntThrowException() {
+    public void delete_validId_successful() {
         assertDoesNotThrow(() -> categoryService.deleteById(detective.getId()));
     }
 }

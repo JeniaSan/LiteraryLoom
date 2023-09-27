@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-user-role-into-role-table
+      author: YEvhenii Polishuchenko
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: 'ROLE_USER'

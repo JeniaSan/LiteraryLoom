@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,15 +29,16 @@ public class ShoppingCartController {
     @Operation(summary = "Get a shopping cart",
             description = "Get a shopping cart with all cart items")
     @GetMapping
-    public ShoppingCartDto getShoppingCart() {
-        return shoppingCartService.getShoppingCart();
+    public ShoppingCartDto getShoppingCart(Authentication authentication) {
+        return shoppingCartService.getShoppingCart(authentication);
     }
 
     @Operation(summary = "Add a new cart item",
             description = "Add a new cart item into shopping cart")
     @PostMapping
-    public CartItemResponseDto addCartItem(@RequestBody @Valid CartItemRequestDto cartItemDto) {
-        return shoppingCartService.addCartItem(cartItemDto);
+    public CartItemResponseDto addCartItem(@RequestBody @Valid CartItemRequestDto cartItemDto,
+                                           Authentication authentication) {
+        return shoppingCartService.addCartItem(cartItemDto, authentication);
     }
 
     @Operation(summary = "Update a cart item", description = "Update a cart item in shopping cart")
