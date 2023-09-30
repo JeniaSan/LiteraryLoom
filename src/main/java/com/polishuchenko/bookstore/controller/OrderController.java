@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,9 @@ public class OrderController {
 
     @Operation(summary = "Create an order", description = "Create an order and clear shopping cart")
     @PostMapping
-    public OrderResponseDto addShippingAddress(@RequestBody @Valid OrderAddressDto request) {
-        return orderService.addAddress(request);
+    public OrderResponseDto addShippingAddress(@RequestBody @Valid OrderAddressDto request,
+                                               Authentication authentication) {
+        return orderService.addAddress(request, authentication);
     }
 
     @Operation(summary = "Get all items from order",

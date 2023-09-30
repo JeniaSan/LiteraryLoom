@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,11 +51,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto addAddress(OrderAddressDto request) {
-        Order order = createOrder(request);
+    public OrderResponseDto addAddress(OrderAddressDto request, Authentication authentication) {
+        Order order = createOrder(request, authentication);
         order.setShippingAddress(request.getOrderAddress());
         shoppingCartService.clear(
-                shoppingCartMapper.toEntity(shoppingCartService.getShoppingCart()));
+                shoppingCartMapper.toEntity(
+                        shoppingCartService.getShoppingCart(authentication)), authentication);
         return initializeOrderItems(orderRepository.save(order));
     }
 
@@ -82,9 +84,10 @@ public class OrderServiceImpl implements OrderService {
         return initializeOrderItems(orderRepository.save(order));
     }
 
-    private Order createOrder(OrderAddressDto request) {
+    private Order createOrder(OrderAddressDto request, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
         Order order = new Order();
-        ShoppingCart shoppingCart = shoppingCartService.getCurrentUserCart();
+        ShoppingCart shoppingCart = shoppingCartService.getCurrentUserCart(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(Order.Status.PENDING);
         order.setShippingAddress(request.getOrderAddress());

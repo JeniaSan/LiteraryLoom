@@ -14,11 +14,12 @@ import com.polishuchenko.bookstore.model.User;
 import com.polishuchenko.bookstore.repository.book.BookRepository;
 import com.polishuchenko.bookstore.repository.cartitem.CartItemRepository;
 import com.polishuchenko.bookstore.repository.shoppingcart.ShoppingCartRepository;
+import com.polishuchenko.bookstore.repository.user.UserRepository;
 import com.polishuchenko.bookstore.service.shoppingcart.ShoppingCartService;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartMapper shoppingCartMapper;
     private final BookRepository bookRepository;
     private final CartItemRepository cartItemRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -48,14 +50,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void clear(ShoppingCart shoppingCart) {
+    public void clear(ShoppingCart shoppingCart, Authentication authentication) {
         cartItemRepository.deleteAll(shoppingCart.getCartItems());
-        getCurrentUserCart().getCartItems().clear();
+        User user = (User) authentication.getPrincipal();
+        getCurrentUserCart(user).getCartItems().clear();
     }
 
     @Override
-    public ShoppingCartDto getShoppingCart() {
-        ShoppingCart shoppingCart = getCurrentUserCart();
+    public ShoppingCartDto getShoppingCart(Authentication authentication) {
+        String userName = authentication.getName();
+        User currentUser = userRepository.findUserByUsername(userName);
+        ShoppingCart shoppingCart = getCurrentUserCart(currentUser);
         ShoppingCartDto shoppingCartDto = shoppingCartMapper.toDto(shoppingCart);
         shoppingCartDto.setCartItems(shoppingCart.getCartItems().stream()
                 .map(cartItemMapper::toDto)
@@ -65,8 +70,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Transactional
     @Override
-    public CartItemResponseDto addCartItem(CartItemRequestDto cartItemRequestDto) {
-        ShoppingCart shoppingCart = getCurrentUserCart();
+    public CartItemResponseDto addCartItem(CartItemRequestDto cartItemRequestDto,
+                                           Authentication authentication) {
+        String userName = authentication.getName();
+        User currentUser = userRepository.findUserByUsername(userName);
+        ShoppingCart shoppingCart = getCurrentUserCart(currentUser);
         Book book = bookRepository.findById(cartItemRequestDto.bookId()).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Can't find book with id=" + cartItemRequestDto.bookId()));
@@ -76,8 +84,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCart getCurrentUserCart() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ShoppingCart getCurrentUserCart(User user) {
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId());
         shoppingCart.setCartItems(
                 cartItemRepository.getCartItemsByShoppingCartId(shoppingCart.getId()));

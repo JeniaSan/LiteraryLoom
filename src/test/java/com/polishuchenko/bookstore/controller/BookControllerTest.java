@@ -101,7 +101,7 @@ public class BookControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get list of books")
-    void getAll_validRequestDto_ReturnsBookDtosList() throws Exception {
+    void getAll_validRequestDto_returnsBookDtosList() throws Exception {
         List<BookDto> expected = List.of(kobzarDto);
         MvcResult mvcResult = mockMvc.perform(get("/books")).andReturn();
 
@@ -121,7 +121,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get book dto by valid id")
-    void getBookById_validId_ReturnsExpectedBook() throws Exception {
+    void getBookById_validId_returnsExpectedBook() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/books/" + VALID_ID)).andReturn();
 
         BookDto actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
@@ -139,7 +139,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Get book by invalid id")
-    void getBookById_invalidId_ThrowsException() throws Exception {
+    void getBookById_invalidId_throwsException() throws Exception {
         mockMvc.perform(get("/books/" + INVALID_ID))
                 .andExpect(status().isNotFound());
     }
@@ -150,7 +150,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Create new book and add to DB")
-    void create_validRequest_ReturnsBookDto() throws Exception {
+    void create_validRequest_returnsBookDto() throws Exception {
         MvcResult mvcResult = mockMvc.perform(post("/books")
                         .content(objectMapper.writeValueAsString(kobzarRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -169,7 +169,7 @@ public class BookControllerTest {
     @Sql(
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
-    void create_RequestEmptyTitle_ThrowsException() throws Exception {
+    void create_RequestEmptyTitle_throwsException() throws Exception {
         mockMvc.perform(post("/books")
                         .content(objectMapper.writeValueAsString(invalidRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -186,7 +186,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Delete book by valid id")
-    void delete_validId_Successful() throws Exception {
+    void delete_validId_successful() throws Exception {
         mockMvc.perform(delete("/books/" + VALID_ID))
                 .andExpect(status().isNoContent());
     }
@@ -200,7 +200,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update book by valid request")
-    void update_validRequest_ReturnsExpectedBook() throws Exception {
+    void update_validRequest_returnsExpectedBook() throws Exception {
         MvcResult mvcResult = mockMvc.perform(put("/books/" + VALID_ID)
                         .content(objectMapper.writeValueAsString(kobzarRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -223,7 +223,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Update book by invalid id request")
-    void update_invalidRequest_ThrowsException() throws Exception {
+    void update_invalidRequest_throwsException() throws Exception {
         mockMvc.perform(put("/books/" + INVALID_ID)
                         .content(objectMapper.writeValueAsString(invalidRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -240,7 +240,7 @@ public class BookControllerTest {
             scripts = DELETE_BOOK_SCRIPT, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     @DisplayName("Find all books by valid params")
-    public void getAllBooks_validParams_ReturnsBooksList() throws Exception {
+    public void getAllBooks_validParams_returnsBooksList() throws Exception {
         List<BookDto> expected = List.of(kobzarDto);
         MvcResult mvcResult = mockMvc.perform(get("/books/search?author=" + kobzar.getAuthor()))
                 .andReturn();

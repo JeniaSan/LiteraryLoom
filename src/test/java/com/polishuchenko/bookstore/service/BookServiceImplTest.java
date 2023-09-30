@@ -97,7 +97,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Save book to DB")
-    public void save_validBook_ReturnsExpectedBook() {
+    public void save_validBook_returnsExpectedBook() {
         when(bookMapper.toModel(kobzarRequestDto)).thenReturn(kobzar);
         when(bookRepository.save(any(Book.class))).thenReturn(kobzar);
         when(bookMapper.toDto(kobzar)).thenReturn(kobzarDto);
@@ -111,7 +111,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Find all books")
-    public void findAll_ReturnsBooksList() {
+    public void findAll_returnsBooksList() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Book> books = List.of(kobzar);
         List<BookDto> bookDtos = List.of(kobzarDto);
@@ -127,7 +127,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Get book by valid id")
-    public void getById_validId_ReturnsExpectedBook() {
+    public void getById_validId_returnsExpectedBook() {
         when(bookRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(kobzar));
         when(bookMapper.toDto(ArgumentMatchers.any())).thenReturn(kobzarDto);
 
@@ -137,20 +137,20 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Throw exception because book id is invalid")
-    public void getById_invalidId_ThrowsException() {
+    public void getById_invalidId_throwsException() {
         assertThrows(EntityNotFoundException.class,
                 () -> bookService.getById(INVALID_ID));
     }
 
     @Test
     @DisplayName("Delete by valid id")
-    public void delete_validId_DoesntThrowsException() {
+    public void delete_validId_successful() {
         assertDoesNotThrow(() -> bookService.deleteById(kobzar.getId()));
     }
 
     @Test
     @DisplayName("Update by valid id")
-    public void updateById_validId_ReturnsExpected() {
+    public void updateById_validId_returnsExpected() {
         CreateBookRequestDto bookRequestDto = new CreateBookRequestDto();
         bookRequestDto.setAuthor("New Author");
         Book book = new Book();
@@ -171,7 +171,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Find all books by params")
-    public void getAllBooks_validParams_ReturnsBooksList() {
+    public void getAllBooks_validParams_returnsBooksList() {
         BookSearchParameters searchParameters = new BookSearchParameters(
                 new String[]{"kobzar"}, new String[0], new String[0], new String[0]);
         Specification<Book> specification = mock(Specification.class);
@@ -188,7 +188,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("Find all books by valid category id")
-    public void getAllBooks_validCategoryId_ReturnsBooksList() {
+    public void getAllBooks_validCategoryId_returnsBooksList() {
         List<Book> books = List.of(kobzar);
         final List<BookDtoWithoutCategoryIds> bookDtos = List.of(kobzarDtoWithoutCategory);
 
