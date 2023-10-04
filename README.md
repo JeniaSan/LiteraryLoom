@@ -28,6 +28,35 @@ Within our Online Book Store project, we have meticulously adhered to REST (Repr
 - CategoryController: Here, you can find the handling of requests for adding, updating, and retrieving categories, as well as fetching all books within a specific category.
 - ShoppingCartController: Within this controller, you can request actions such as adding, deleting, and updating books within the shopping cart, as well as retrieving the user's shopping cart.
 - OrderController: This controller is responsible for handling requests related to creating and retrieving orders, as well as updating the status of orders.
+## Controllers functionalities
+- ### AuthenticationController (/auth):
+1) POST /register - Register user and save to DB;
+2) POST /login - Login user and return JWT token;
+- ### BookController (/books):
+1) GET - Get a list of all available books;
+2) GET /{id} - Get book by id;
+3) POST - Create a new book and insert into database;
+4) DELETE /{id} - Delete book by id;
+5) PUT /{id} - Update a book to the request values;
+6) GET /search - Search books by params. All params : author, isbn, price, title;
+- ### CategoryController (/categories):
+1) POST - Create a new category;
+2) GET - Get a list of all available categories;
+3) GET /{id} - Get a category by id;
+4) PUT /{id} - Update a category;
+5) DELETE /{id} - Delete a category by id;
+6) GET /{id}/books - Get a list of all available books by category id;
+- ### ShoppingCartController (/cart):
+1) GET - Get a shopping cart with all cart items;
+2) POST - Add a new cart item into shopping cart;
+3) PUT - /cart-items/{cartItemId} - Update a cart item in shopping cart;
+4) DELETE - /cart-items/{cartItemId} - Delete cart item in shopping cart
+- ### OrderController (/orders):
+1) GET - Get orders history;
+2) POST - Create an order and clear shopping cart;
+3) GET - /{orderId}/items - Get a list of all items from order;
+4) GET - /{orderId}/items/{itemId} - Get an order item from order;
+5) PATCH - /{id} - Change order status;
 ## A list of what needs to be installed to run this application:
 - Java 17 (https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - PostgreSQL (https://www.postgresql.org/download/)
@@ -49,6 +78,10 @@ Then, rise a **Docker** container of your app:
  docker-compose build
  docker-compose up
  ```
+Also, you can run this project without docker, but before that, you need to configure the connection to your local database in the application properties. Run this command after that:
+```bash
+ mvn spring-boot:run
+```
 ## Video presentation
 This video shows the operation of the application in detail. Here we will see how the search for books and categories works, the ability of the admin to change them, and how the shopping cart and orders work.
 **Link** : https://www.loom.com/share/0d0a39e23f1b44d790b2efebb256edc5
