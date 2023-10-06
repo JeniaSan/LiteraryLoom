@@ -62,7 +62,6 @@ Within our Online Book Store project, we have meticulously adhered to REST (Repr
 - PostgreSQL (https://www.postgresql.org/download/)
 - Docker (https://www.docker.com/)
 - Maven (https://maven.apache.org/download.cgi)
-- P.S. FOR MENTORS : I will change this section to swagger in the future when I deploy the project to AWS
 ## How to start this app:
 Download git repository by git command:
  ```bash
