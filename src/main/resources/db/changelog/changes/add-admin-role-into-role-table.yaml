@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-admin-role-into-role-table
+      author: YEvhenii Polishuchenko
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: 'ROLE_ADMIN'
+
