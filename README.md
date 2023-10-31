@@ -1,4 +1,4 @@
-# Online-Book-Store
+# LiteraryLoom
 This application is a bookstore that allows you to browse books, add to cart, issue and track the status of the order
 ## Table of Contents
 - [Intro](#introduction)
